@@ -1,0 +1,17 @@
+grammar org.example.am.AM with org.eclipse.xtext.common.Terminals
+
+generate aM "http://www.example.org/am/AM"
+
+AvailableModules:
+modules+=ModuleDecl*;
+
+ModuleDecl:
+id=MODULE_ID required=Required repeat=INT? range=OptParanNum?;
+
+enum Required:
+REQ='req' | OPT='opt';
+
+OptParanNum:
+'[' min=INT max=INT ']';
+
+terminal MODULE_ID: 'MODULE_' ('A'..'Z' | '_')+;

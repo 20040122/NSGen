@@ -1,0 +1,35 @@
+grammar org.example.tm.TM with org.eclipse.xtext.common.Terminals
+
+generate tM "http://www.example.org/tm/TM"
+
+Model:
+    modules+=Module*
+;
+
+Module:
+    name=ID ':' type=Type
+    (attrs+=Attribute (',' attrs+=Attribute)*)?
+    '/'
+;
+
+Type:
+    '&' name=ID
+;
+
+Attribute:
+    name=ID ('=' value=Value)?
+;
+
+Value:
+      v?='[[V]]'
+    | c?='[[C]]'
+    | ref=Ref
+;
+
+Ref: '<' module=ID '.' key=ID '>';
+
+
+
+terminal ID: ('A'..'Z'|'a'..'z'|'_') ('A'..'Z'|'a'..'z'|'0'..'9'|'_' )*;
+terminal WS: (' ' | '\t' | '\r' | '\n')+;
+terminal SL_COMMENT: '//' !('\n'|'\r')* ('\r'? '\n')?;
