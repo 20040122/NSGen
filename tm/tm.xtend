@@ -5,6 +5,8 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+
+// 按你工程实际包名调整（这里假设是 org.example.tm.tM）
 import org.example.tm.tM.Model
 import org.example.tm.tM.Module
 import org.example.tm.tM.Attribute

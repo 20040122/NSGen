@@ -1,0 +1,143 @@
+[
+{
+   "mid": "&HEAD",
+   "id": "CHID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'InconsistentCase1'", "'InconsistentCase2'"]
+ },
+{
+   "mid": "&HEAD",
+   "id": "TITLE",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'InconsistentCase1'", "'InconsistentCase2'"]
+ },
+{
+   "mid": "&MESH",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'MESH1'"],
+   "extend": "1:MODULE_MESH.SPECIAL_CONFIG"
+ },
+{
+   "mid": "&MESH",
+   "id": "IJK",
+   "valueType": "{integer}[3]",
+   "isMust": true,
+   "dimension": 3,
+   "scale": [35, 40]
+ },
+{
+   "mid": "&MESH",
+   "id": "XB",
+   "valueType": "{float}[6]",
+   "isMust": true,
+   "dimension": 6,
+   "scale": [-20.0, 50.0]
+ },
+{
+   "mid": "&MESH",
+   "id": "SPECIAL_CONFIG",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10.0, 20.0]
+ },
+{
+   "mid": "&TIME",
+   "id": "T_BEGIN",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [0.0, 50.0],
+   "extend": "0.0:MODULE_TIME.INIT_FLAG"
+ },
+{
+   "mid": "&TIME",
+   "id": "T_END",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [50.0, 100.0]
+ },
+{
+   "mid": "&TIME",
+   "id": "INIT_FLAG",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [1, 5]
+ },
+{
+   "mid": "&OBST",
+   "id": "XB",
+   "valueType": "{float}[6]",
+   "isMust": true,
+   "dimension": 6,
+   "scale": [0.0, 30.0]
+ },
+{
+   "mid": "&OBST",
+   "id": "SURF_ID",
+   "valueType": "string",
+   "isMust": false,
+   "dependency": "<ref:MODULE_SURF.ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'surf1'", "'surf2'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "HRRPUA",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [100.0, 500.0],
+   "exclusion": "<clusion:MODULE_SURF.MATL_ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "NEAR_WALL_EDDY_VISCOSITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 5.0],
+   "exclusion": "<clusion:MODULE_TIME.T_BEGIN:0>"
+ },
+{
+   "mid": "&VENT",
+   "id": "SURF_ID",
+   "valueType": "string",
+   "isMust": false,
+   "dependency": "<ref:MODULE_SURF.ID>"
+ },
+{
+   "mid": "&MATL",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'STEEL'", "'WOOD'", "'CONCRETE'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "MATL_ID",
+   "valueType": "string",
+   "isMust": false,
+   "dependency": "<ref:MODULE_MATL.ID>"
+ },
+{
+   "mid": "&REAC",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'METHANE'", "'PROPANE'"]
+ },
+{
+   "mid": "&REAC",
+   "id": "FUEL",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'CH4'", "'C3H8'"],
+   "dependency": "<ref:MODULE_REAC.ID>"
+ }
+]

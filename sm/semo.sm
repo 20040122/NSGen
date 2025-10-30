@@ -1,0 +1,104 @@
+Id=MODULE_HEAD.CHID
+ValueType=string
+IsMust=True
+Scale={'InconsistentCase1','InconsistentCase2'}
+
+Id=MODULE_HEAD.TITLE
+ValueType=string
+IsMust=False
+Scale={'InconsistentCase1','InconsistentCase2'}
+
+Id=MODULE_MESH.ID
+ValueType=integer
+IsMust=True
+Scale={1}
+Extend=<td:1:MODULE_MESH.SPECIAL_CONFIG>
+
+Id=MODULE_MESH.IJK
+ValueType={integer}[3]
+IsMust=True
+Scale={35, 40}
+
+Id=MODULE_MESH.XB
+ValueType={float}[6]
+IsMust=True
+Scale={-20.0, 50.0}
+
+Id=MODULE_MESH.SPECIAL_CONFIG
+ValueType=float
+IsMust=False
+Scale={10.0, 20.0}
+
+Id=MODULE_TIME.T_BEGIN
+ValueType=float
+IsMust=True
+Scale={0.0, 0.01}
+Extend=<td:0.0:MODULE_TIME.INIT_FLAG>
+
+Id=MODULE_TIME.T_END
+ValueType=float
+IsMust=False
+Scale={50.0, 100.0}
+
+Id=MODULE_TIME.INIT_FLAG
+ValueType=integer
+IsMust=False
+Scale={3, 5}
+
+Id=MODULE_OBST.XB
+ValueType={float}[6]
+IsMust=True
+Scale={0.0, 30.0}
+
+Id=MODULE_OBST.SURF_ID
+ValueType=string
+IsMust=False
+Scale={}
+Dependency=<ref:MODULE_SURF.ID>
+
+Id=MODULE_SURF.ID
+ValueType=string
+IsMust=True
+Scale={'surf1','surf2'}
+
+Id=MODULE_SURF.HRRPUA
+ValueType=float
+IsMust=False
+Scale={100.0, 500.0}
+Exclusion=<clusion:MODULE_SURF.MATL_ID>
+
+Id=MODULE_SURF.NEAR_WALL_EDDY_VISCOSITY
+ValueType=float
+IsMust=False
+Scale={0.0, 5.0}
+Exclusion=<clusion:MODULE_TIME.T_BEGIN:0>
+
+Id=MODULE_VENT.SURF_ID
+ValueType=string
+IsMust=False
+Scale={}
+Dependency=<ref:MODULE_SURF.ID>
+
+Id=MODULE_MATL.ID
+ValueType=string
+IsMust=True
+Scale={'STEEL','WOOD','CONCRETE'}
+
+Id=MODULE_SURF.MATL_ID
+ValueType=string
+IsMust=False
+Scale={}
+Dependency=<ref:MODULE_MATL.ID>
+
+Id=MODULE_REAC.ID
+ValueType=string
+IsMust=True
+Scale={'METHANE','PROPANE'}
+
+Id=MODULE_REAC.FUEL
+ValueType=string
+IsMust=True
+Scale={'CH4','C3H8'}
+Dependency=<ref:MODULE_REAC.ID>
+
+

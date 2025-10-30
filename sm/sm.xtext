@@ -1,0 +1,95 @@
+grammar org.example.sm.SM with org.eclipse.xtext.common.Terminals
+
+generate sM "http://www.example.org/sm/SM"
+
+Model:
+    props+=ValProp*
+;
+
+QualifiedName: ID ('.' ID)*;
+
+ValProp:
+    'Id=' id=QualifiedName
+    'ValueType=' valueType=ValType
+    'IsMust=' isMust=Must
+    'Scale=' scale=Scale
+    (
+        ('Dependency=' dependency=Dependency)
+      | ('Exclusion='        exclusion=Exclusion)
+      | ('Extend='     extend=Extend)
+    )*
+;
+
+
+ValType:
+      ('boolean' | 'integer' | 'float' | 'string')
+    | '<enum>'
+    | '{' ('integer' | 'float' | 'character') '}' Dimension?
+;
+
+Dependency:
+    '<' ('ref:' | 'dependency:')? refName=QualifiedName '>'
+;
+
+Exclusion:
+    '<' 'clusion:' refName=QualifiedName (':' refValue=ExclusionValue)? '>'
+;
+
+ExclusionValue:
+      SIGNED_INT
+    | UNSIGNED_INT
+    | FLOAT
+    | STRING
+    | SSTRING
+    | ID
+;
+
+Extend:
+    '<' 'td:' triggerValue=ExtendValue ':' refName=QualifiedName '>'
+;
+
+ExtendValue:
+      SIGNED_INT
+    | UNSIGNED_INT
+    | FLOAT
+    | STRING
+    | SSTRING
+    | ID
+;
+
+Must:
+    value=('True' | 'False')
+;
+
+Scale:
+    ('{' (values+=ScaleValue (',' values+=ScaleValue)*)? '}')
+  | ('[' (values+=ScaleValue (',' values+=ScaleValue)*)? ']')
+;
+
+ScaleValue:
+      SIGNED_INT
+    | UNSIGNED_INT
+    | FLOAT
+    | STRING
+    | SSTRING
+;
+
+Dimension:
+    '[' size=UNSIGNED_INT ']'
+;
+
+terminal SIGNED_INT:
+    ('+'|'-') UNSIGNED_INT
+;
+
+terminal UNSIGNED_INT:
+    ('0'..'9')+
+;
+
+terminal FLOAT:
+    ('+'|'-')?
+    ( UNSIGNED_INT '.' UNSIGNED_INT? | '.' UNSIGNED_INT )
+    ( ('e'|'E') ('+'|'-')? UNSIGNED_INT )?
+;
+
+terminal SSTRING: '\'' ( '\\' . | !('\\'|'\'') )* '\'';

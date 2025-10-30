@@ -9,7 +9,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Match {
+public class Main {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class Rule {
@@ -25,7 +25,7 @@ public class Match {
             Paths.get("D:\\runtime-EclipseApplication\\attempt");
 
     static List<Rule> loadRules(String... externalPathOpt) throws Exception {
-        try (InputStream cp = Main.class.getResourceAsStream("/demo.json")) {
+        try (InputStream cp = Main.class.getResourceAsStream("../attempt/src-gen/demo.json")) {
             if (cp != null) {
                 return Arrays.asList(new ObjectMapper().readValue(cp, Rule[].class));
             }
@@ -34,7 +34,7 @@ public class Match {
         if (externalPathOpt != null && externalPathOpt.length > 0 && externalPathOpt[0] != null) {
             p = Paths.get(externalPathOpt[0]);
         } else {
-            p = Paths.get(System.getProperty("user.dir")).resolve("../attempt/demo.json").normalize();
+            p = Paths.get(System.getProperty("user.dir")).resolve("../attempt/src-gen/demo.json").normalize();
         }
         try (InputStream in = new FileInputStream(p.toFile())) {
             return Arrays.asList(new ObjectMapper().readValue(in, Rule[].class));
