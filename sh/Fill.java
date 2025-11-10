@@ -28,8 +28,8 @@ public class Fill {
         public String extend;
     }
 
-    private static final int MAX_VALUE_RETRIES = 10;  // 单个值的重试次数
-    private static final int MAX_TEMPLATE_RETRIES = 3; // 整个模板的重试次数
+    private static final int MAX_VALUE_RETRIES = 5;  // 单个值的重试次数
+    private static final int MAX_TEMPLATE_RETRIES = 5; // 整个模板的重试次数
 
     private static Map<String, Map<String, Rule>> indexByMidId(List<Rule> rules) {
         Map<String, Map<String, Rule>> idx = new HashMap<>();
@@ -84,7 +84,11 @@ public class Fill {
             try {
                 List<String> lines = Files.readAllLines(templatePath, StandardCharsets.UTF_8);
                 for (String line : lines) {
-                    String processedLine = replaceLine(line, idx, valueCache, generatedKeys);
+                    // 为每一行创建独立的 generatedKeys，避免跨行污染
+                    Set<String> lineGeneratedKeys = new HashSet<>();
+                    String processedLine = replaceLine(line, idx, valueCache, lineGeneratedKeys);
+                    // 将本行生成的 key 添加到全局 generatedKeys（用于依赖检查）
+                    generatedKeys.addAll(lineGeneratedKeys);
                     // 后处理：移除所有未填充的占位符（保留 [[V]] 或 [[C]] 的参数）
                     processedLine = removeUnfilledPlaceholders(processedLine);
                     out.add(processedLine);
@@ -135,7 +139,7 @@ public class Fill {
 
         // 处理顺序：<MODULE_XX.YY> -> [[C]] -> [[V]]
         
-        // 第一步：处理引用格式 PARAM=<MODULE_XX.YY>（根据JSON规则填充）
+        // 第一步：处理引用格式 PARAM=<MODULE_XX.YY>（从引用的模块中获取值）
         StringBuffer sb = new StringBuffer();
         Matcher phr = PLACEHOLDER_REF_IN_LINE.matcher(line);
         while (phr.find()) {
@@ -143,23 +147,45 @@ public class Fill {
             String refModule = phr.group(2).toUpperCase();  // 引用的模块，如 MODULE_SURF
             String refParam = phr.group(3).toUpperCase();   // 引用的参数，如 ID
             
-            // 查找当前参数的 JSON 规则
-            String currentKey = mid + "." + paramName;
-            Rule rule = Optional.ofNullable(idx.get(mid)).map(map -> map.get(paramName)).orElse(null);
+            // 构造引用路径：&MODULE_SURF.ID
+            String refMid = "&" + refModule.replace("MODULE_", "");
+            String refKey = refMid + "." + refParam;
+            
+            // 从缓存中查找引用值（查找所有带 UUID 的 key，选择最后一个匹配项）
+            String foundValue = null;
+            for (String cachedKey : valueCache.keySet()) {
+                if (extractBaseKey(cachedKey).equalsIgnoreCase(refKey)) {
+                    foundValue = valueCache.get(cachedKey);
+                    // 不 break，继续查找，最终会得到最后一个匹配的值
+                }
+            }
             
             String replacement;
-            if (rule == null) {
-                // 没有规则，保留原样
-                replacement = phr.group(0);
+            if (foundValue != null) {
+                // 找到引用值，直接使用（添加引号如果需要）
+                Rule currentRule = Optional.ofNullable(idx.get(mid)).map(map -> map.get(paramName)).orElse(null);
+                String valueType = (currentRule != null) ? currentRule.valueType : "string";
+                replacement = paramName + "=" + quoteIfNeeded(foundValue, valueType);
             } else {
-                // 根据 JSON 规则生成值（会自动处理 dependency）
-                replacement = paramName + "=" + generateValue(rule, paramName, idx, valueCache, generatedKeys, currentKey);
+                // 未找到引用值，尝试生成（如果当前参数有规则）
+                Rule rule = Optional.ofNullable(idx.get(mid)).map(map -> map.get(paramName)).orElse(null);
+                if (rule == null) {
+                    // 没有规则，保留原样
+                    replacement = phr.group(0);
+                } else if (shouldGenerateParam(rule)) {
+                    // 根据 isMust 决定是否生成（会触发依赖生成）
+                    String uniqueKey = mid + "." + paramName + "#" + UUID.randomUUID().toString();
+                    replacement = paramName + "=" + generateValue(rule, paramName, idx, valueCache, generatedKeys, uniqueKey);
+                } else {
+                    // 不生成，保留占位符
+                    replacement = phr.group(0);
+                }
             }
             phr.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
         phr.appendTail(sb);
         
-        // 第二步：处理 [[C]] 占位符（常量或引用类型）
+        // 第二步：处理 [[C]] 占位符（常量）
         String result = sb.toString();
         Matcher phc = PLACEHOLDER_C_IN_LINE.matcher(result);
         sb = new StringBuffer();
@@ -169,9 +195,12 @@ public class Fill {
             String replacement;
             if (rule == null) {
                 replacement = phc.group(0);
+            } else if (shouldGenerateParam(rule)) {
+                // [[C]] 是常量，也使用 UUID（允许多个不同的常量值）
+                String uniqueKey = mid + "." + id + "#" + UUID.randomUUID().toString();
+                replacement = id + "=" + generateValue(rule, id, idx, valueCache, generatedKeys, uniqueKey);
             } else {
-                String key = mid + "." + id;
-                replacement = id + "=" + generateValue(rule, id, idx, valueCache, generatedKeys, key);
+                replacement = phc.group(0);
             }
             phc.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
@@ -187,9 +216,20 @@ public class Fill {
             String replacement;
             if (rule == null) {
                 replacement = ph.group(0);
-            } else {
-                String key = mid + "." + id;
+            } else if (shouldGenerateParam(rule)) {
+                // 检查是否会被其他参数依赖
+                boolean isReferenced = isParameterReferenced(mid, id, idx);
+                String key;
+                if (isReferenced) {
+                    // 如果会被引用，使用原始 key（不带 UUID）
+                    key = mid + "." + id;
+                } else {
+                    // 否则使用 UUID key，允许多值
+                    key = mid + "." + id + "#" + UUID.randomUUID().toString();
+                }
                 replacement = id + "=" + generateValue(rule, id, idx, valueCache, generatedKeys, key);
+            } else {
+                replacement = ph.group(0);
             }
             ph.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
@@ -219,7 +259,11 @@ public class Fill {
         
         for (String key : generatedKeys) {
             if (key.startsWith(mid + ".")) {
-                String paramId = key.substring(mid.length() + 1);
+                // 提取参数 ID（去掉 UUID 部分）
+                String keyWithoutMid = key.substring(mid.length() + 1);
+                String paramId = keyWithoutMid.contains("#") 
+                    ? keyWithoutMid.substring(0, keyWithoutMid.indexOf("#"))
+                    : keyWithoutMid;
                 
                 // 检查该参数是否已经在行中（通过正则匹配 PARAM_ID=）
                 Pattern paramPattern = Pattern.compile("\\b" + paramId + "=", Pattern.CASE_INSENSITIVE);
@@ -251,6 +295,43 @@ public class Fill {
         return line;
     }
     
+    /**
+     * 决定是否生成参数（不考虑 isMust 字段）
+     * @param rule JSON 规则
+     * @return true 始终生成参数
+     */
+    private static boolean shouldGenerateParam(Rule rule) {
+        // 始终生成参数，不考虑 isMust 字段
+        return true;
+    }
+    
+    /**
+     * 检查某个参数是否会被其他参数依赖（引用）
+     * @param mid 模块 ID（如 &SURF）
+     * @param id 参数 ID（如 ID）
+     * @param idx 规则索引
+     * @return true 如果该参数会被其他参数依赖
+     */
+    private static boolean isParameterReferenced(String mid, String id, Map<String, Map<String, Rule>> idx) {
+        String targetKey = mid.substring(1) + "." + id; // 移除 & 前缀，如 "SURF.ID"
+        
+        // 遍历所有规则，检查是否有 dependency 指向该参数
+        for (Map<String, Rule> moduleRules : idx.values()) {
+            for (Rule rule : moduleRules.values()) {
+                if (rule.dependency != null && !rule.dependency.isEmpty()) {
+                    String dep = rule.dependency.replaceAll("^<(ref:|dependency:)?", "").replaceAll(">$", "");
+                    // 检查依赖路径是否匹配（忽略 MODULE_ 前缀）
+                    String normalizedDep = dep.replace("MODULE_", "");
+                    if (normalizedDep.equalsIgnoreCase(targetKey)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     // 生成值的主入口，按照流程图处理：初始化 -> 依赖检查 -> 扩展检查 -> 排斥检查
     private static String generateValue(Rule r, String id, Map<String, Map<String, Rule>> idx, 
                                        Map<String, String> valueCache, Set<String> generatedKeys,
@@ -265,14 +346,21 @@ public class Fill {
                 String refId = parts[1];
                 String refKey = refMid + "." + refId;
                 
-                // 检查缓存：如果依赖项已生成，直接使用
-                if (valueCache.containsKey(refKey)) {
-                    String cachedValue = valueCache.get(refKey);
-                    generatedKeys.add(currentKey);
-                    return quoteIfNeeded(cachedValue, r.valueType);
+                // 检查缓存：查找所有带 UUID 的 key，找到第一个匹配的基础 key
+                String foundValue = null;
+                for (String cachedKey : valueCache.keySet()) {
+                    if (extractBaseKey(cachedKey).equalsIgnoreCase(refKey)) {
+                        foundValue = valueCache.get(cachedKey);
+                        break;
+                    }
                 }
                 
-                // 如果依赖项未生成，先为依赖项生成值（递归）
+                if (foundValue != null) {
+                    generatedKeys.add(currentKey);
+                    return quoteIfNeeded(foundValue, r.valueType);
+                }
+                
+                // 如果依赖项未生成，先为依赖项生成值（递归，使用原始 key 不带 UUID）
                 Rule refRule = Optional.ofNullable(idx.get(refMid)).map(map -> map.get(refId)).orElse(null);
                 if (refRule != null) {
                     String depValue = generateValue(refRule, refId, idx, valueCache, generatedKeys, refKey);
@@ -326,7 +414,7 @@ public class Fill {
             // 超过最大重试次数，保留占位符
             System.out.println("  ⊗ Failed to generate valid value for " + currentKey + " after " + MAX_VALUE_RETRIES + " retries (keeping placeholder)");
             return "[[V]]";
-        }
+        } 
         
         // 5. 扩展检查（Extend）：如果当前字段有 extend 规则，检查是否触发扩展
         String pureValue = generatedValue.replaceAll("^'|'$", "");
@@ -357,10 +445,13 @@ public class Fill {
                 String exclId = parts[1];
                 String exclKey = exclMid + "." + exclId;
                 
-                // 检查排斥的 key 是否已生成
-                if (generatedKeys.contains(exclKey)) {
-                    System.out.println("  ✗ Key exclusion: " + currentKey + " cannot coexist with " + exclKey);
-                    return false; // 键冲突，不能生成
+                // 检查排斥的 key 是否已生成（忽略 UUID 部分）
+                for (String existingKey : generatedKeys) {
+                    String baseKey = extractBaseKey(existingKey);
+                    if (baseKey.equalsIgnoreCase(exclKey)) {
+                        System.out.println("  ✗ Key exclusion: " + extractBaseKey(currentKey) + " cannot coexist with " + exclKey);
+                        return false; // 键冲突，不能生成
+                    }
                 }
             }
         }
@@ -395,12 +486,14 @@ public class Fill {
                     String exclId = keyParts[1];
                     String exclKey = exclMid + "." + exclId;
                     
-                    // 检查排斥的 key 是否存在且值等于 excludedValue
-                    if (valueCache.containsKey(exclKey)) {
-                        String exclValue = valueCache.get(exclKey);
-                        if (exclValue.equals(excludedValue)) {
-                            System.out.println("  ✗ Value exclusion: " + currentKey + " cannot coexist with " + exclKey + "=" + excludedValue);
-                            return false; // 值冲突
+                    // 检查排斥的 key 是否存在且值等于 excludedValue（需要查找所有带 UUID 的 key）
+                    for (String cachedKey : valueCache.keySet()) {
+                        if (extractBaseKey(cachedKey).equalsIgnoreCase(exclKey)) {
+                            String exclValue = valueCache.get(cachedKey);
+                            if (exclValue.equals(excludedValue)) {
+                                System.out.println("  ✗ Value exclusion: " + extractBaseKey(currentKey) + " cannot coexist with " + exclKey + "=" + excludedValue);
+                                return false; // 值冲突
+                            }
                         }
                     }
                 }
@@ -420,8 +513,11 @@ public class Fill {
                                                  Map<String, Map<String, Rule>> idx) {
         // 遍历所有已生成的 key，检查它们是否排斥当前 key
         for (String existingKey : generatedKeys) {
-            // 解析 existingKey (格式: &MID.ID)
-            String[] parts = existingKey.split("\\.", 2);
+            // 提取基础 key（去掉 UUID）
+            String baseExistingKey = extractBaseKey(existingKey);
+            
+            // 解析 existingKey (格式: &MID.ID 或 &MID.ID#UUID)
+            String[] parts = baseExistingKey.split("\\.", 2);
             if (parts.length != 2) continue;
             
             String existingMid = parts[0];
@@ -453,10 +549,10 @@ public class Fill {
                         String exclId = keyParts[1];
                         String exclKey = exclMid + "." + exclId;
                         
-                        if (exclKey.equalsIgnoreCase(currentKey)) {
+                        if (extractBaseKey(currentKey).equalsIgnoreCase(exclKey)) {
                             String currentValue = valueCache.get(currentKey);
                             if (currentValue != null && currentValue.equals(excludedValue)) {
-                                System.out.println("  ✗ Reverse exclusion conflict: " + existingKey + " excludes " + currentKey + "=" + excludedValue);
+                                System.out.println("  ✗ Reverse exclusion conflict: " + baseExistingKey + " excludes " + extractBaseKey(currentKey) + "=" + excludedValue);
                                 return false;
                             }
                         }
@@ -470,8 +566,8 @@ public class Fill {
                     String exclId = exclParts[1];
                     String exclKey = exclMid + "." + exclId;
                     
-                    if (exclKey.equalsIgnoreCase(currentKey)) {
-                        System.out.println("  ✗ Reverse exclusion conflict: " + existingKey + " excludes " + currentKey);
+                    if (extractBaseKey(currentKey).equalsIgnoreCase(exclKey)) {
+                        System.out.println("  ✗ Reverse exclusion conflict: " + baseExistingKey + " excludes " + extractBaseKey(currentKey));
                         return false;
                     }
                 }
@@ -479,6 +575,18 @@ public class Fill {
         }
         
         return true; // 没有反向冲突
+    }
+    
+    /**
+     * 提取基础 key（去掉 UUID 部分）
+     * @param key 完整的 key（可能包含 #UUID）
+     * @return 基础 key（&MID.ID）
+     */
+    private static String extractBaseKey(String key) {
+        if (key.contains("#")) {
+            return key.substring(0, key.indexOf("#"));
+        }
+        return key;
     }
     
     /**
@@ -496,8 +604,11 @@ public class Fill {
         String extendRule = r.extend;
         if (extendRule == null || extendRule.isEmpty()) return;
         
-        // 解析格式：triggerValue:MODULE_M.C
-        // 例如：1:MODULE_MESH.SPECIAL_CONFIG 或 'surf1':MODULE_SURF.EXTRA
+        // 解析格式：<td:triggerValue:MODULE_M.C>
+        // 例如：<td:1:MODULE_MESH.SPECIAL_CONFIG> 或 <td:'SKt2':MODULE_SURF.EXTRA>
+        // 先移除 <td: 和 >
+        extendRule = extendRule.replaceAll("^<td:", "").replaceAll(">$", "").trim();
+        
         String[] parts = extendRule.split(":", 2);
         if (parts.length != 2) {
             System.out.println("  ⚠ Invalid extend format: " + extendRule);
@@ -506,6 +617,9 @@ public class Fill {
         
         String triggerValue = parts[0].trim().replaceAll("^'|'$", "");
         String targetPath = parts[1].trim();
+        
+        // 调试日志：显示 Extend 规则解析结果
+        System.out.println("  ⚙ Extend check: current='" + currentValue + "', trigger='" + triggerValue + "', target='" + targetPath + "'");
         
         // 检查当前值是否触发扩展（支持数值比较）
         if (!valuesMatch(currentValue, triggerValue)) {
@@ -522,11 +636,19 @@ public class Fill {
         
         String targetMid = "&" + pathParts[0].replace("MODULE_", "");
         String targetId = pathParts[1];
-        String targetKey = targetMid + "." + targetId;
+        String targetBaseKey = targetMid + "." + targetId;
         
-        // 检查目标参数是否已存在
-        if (generatedKeys.contains(targetKey)) {
-            System.out.println("  ⊕ Extend skipped: " + targetKey + " already exists");
+        // 检查目标参数是否已存在（使用原始 key 不带 UUID）
+        boolean alreadyExists = false;
+        for (String existingKey : generatedKeys) {
+            if (extractBaseKey(existingKey).equalsIgnoreCase(targetBaseKey)) {
+                alreadyExists = true;
+                break;
+            }
+        }
+        
+        if (alreadyExists) {
+            System.out.println("  ⊕ Extend skipped: " + targetBaseKey + " already exists");
             return;
         }
         
@@ -536,18 +658,18 @@ public class Fill {
                                    .orElse(null);
         
         if (targetRule == null) {
-            System.out.println("  ⚠ Extend failed: Rule not found for " + targetKey);
+            System.out.println("  ⚠ Extend failed: Rule not found for " + targetBaseKey);
             return;
         }
         
-        // 为目标参数生成值（递归调用 generateValue）
-        System.out.println("  ⊕ Extend triggered: Adding " + targetKey + " (trigger value: " + triggerValue + ")");
+        // 为目标参数生成值（递归调用 generateValue），使用原始 key（不带 UUID）
+        System.out.println("  ⊕ Extend triggered: Adding " + targetBaseKey + " (trigger value: " + triggerValue + ")");
         try {
-            String extendedValue = generateValue(targetRule, targetId, idx, valueCache, generatedKeys, targetKey);
+            String extendedValue = generateValue(targetRule, targetId, idx, valueCache, generatedKeys, targetBaseKey);
             // 值已在 generateValue 中缓存到 valueCache 和 generatedKeys
-            System.out.println("  ✓ Extended parameter generated: " + targetKey + " = " + extendedValue);
+            System.out.println("  ✓ Extended parameter generated: " + targetBaseKey + " = " + extendedValue);
         } catch (Exception e) {
-            System.out.println("  ⚠ Extend failed for " + targetKey + ": " + e.getMessage());
+            System.out.println("  ⚠ Extend failed for " + targetBaseKey + ": " + e.getMessage());
         }
     }
     
@@ -586,6 +708,24 @@ public class Fill {
             return quoteIfNeeded(choice, r.valueType);
         }
 
+     // 补全 TRUE/FALSE 范围的布尔类型处理，支持大小写
+        if (r.scale != null && r.scale.size() == 2) {
+            String s1 = String.valueOf(r.scale.get(0)).toLowerCase();
+            String s2 = String.valueOf(r.scale.get(1)).toLowerCase();
+            if ((s1.equals("true") && s2.equals("false")) || (s1.equals("false") && s2.equals("true"))) {
+                boolean val = ThreadLocalRandom.current().nextBoolean();
+                // 保持原 scale 的大小写
+                String result = val ? String.valueOf(r.scale.get(0)) : String.valueOf(r.scale.get(1));
+                // 如果两个 scale 都是 true/false，只是大小写不同，随机选一个
+                if (!result.equalsIgnoreCase("true") && !result.equalsIgnoreCase("false")) {
+                    result = val ? "true" : "false";
+                }
+                return quoteIfNeeded(result, r.valueType);
+            }
+        }
+        
+        
+        
         if (isNumericRange(r.scale)) {
             double min = toDouble(r.scale.get(0));
             double max = toDouble(r.scale.get(1));

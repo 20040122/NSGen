@@ -4,22 +4,14 @@
    "id": "CHID",
    "valueType": "string",
    "isMust": true,
-   "scale": ["'InconsistentCase1'", "'InconsistentCase2'"]
+   "scale": ["'Ystcase'"]
  },
 {
    "mid": "&HEAD",
    "id": "TITLE",
    "valueType": "string",
-   "isMust": false,
-   "scale": ["'InconsistentCase1'", "'InconsistentCase2'"]
- },
-{
-   "mid": "&MESH",
-   "id": "ID",
-   "valueType": "string",
    "isMust": true,
-   "scale": ["'MESH1'"],
-   "extend": "1:MODULE_MESH.SPECIAL_CONFIG"
+   "scale": ["'cstdd'"]
  },
 {
    "mid": "&MESH",
@@ -27,7 +19,7 @@
    "valueType": "{integer}[3]",
    "isMust": true,
    "dimension": 3,
-   "scale": [35, 40]
+   "scale": [3, 40]
  },
 {
    "mid": "&MESH",
@@ -35,109 +27,1187 @@
    "valueType": "{float}[6]",
    "isMust": true,
    "dimension": 6,
-   "scale": [-20.0, 50.0]
- },
-{
-   "mid": "&MESH",
-   "id": "SPECIAL_CONFIG",
-   "valueType": "float",
-   "isMust": false,
-   "scale": [10.0, 20.0]
+   "scale": [-50, 50]
  },
 {
    "mid": "&TIME",
    "id": "T_BEGIN",
    "valueType": "float",
    "isMust": true,
-   "scale": [0.0, 50.0],
-   "extend": "0.0:MODULE_TIME.INIT_FLAG"
+   "scale": [0.0, 50.0]
  },
 {
    "mid": "&TIME",
    "id": "T_END",
    "valueType": "float",
-   "isMust": false,
-   "scale": [50.0, 100.0]
+   "isMust": true,
+   "scale": [0.0, 50.0]
  },
 {
    "mid": "&TIME",
-   "id": "INIT_FLAG",
-   "valueType": "integer",
-   "isMust": false,
-   "scale": [1, 5]
+   "id": "DT",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [0.2, 1]
  },
 {
-   "mid": "&OBST",
+   "mid": "&TIME",
+   "id": "LOCK_TIME_STEP",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "AEROSOL_AL2O3",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "AEROSOL_SCRUBBING",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "AGGLOMERATION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "ALLOW_UNDERSIDE_PARTICLES",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "BNDF_DEFAULT",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "CONSTANT_SPECIFIC_HEAT_RATIO",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "DEPOSITION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "FREEZE_VELOCITY",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "GAMMA",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1, 2]
+ },
+{
+   "mid": "&MISC",
+   "id": "GRAVITATIONAL_DEPOSITION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "GRAVITATIONAL_SETTLING",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "GVEC",
+   "valueType": "{float}[3]",
+   "isMust": false,
+   "dimension": 3,
+   "scale": [-10, 10]
+ },
+{
+   "mid": "&MISC",
+   "id": "H_F_REFERENCE_TEMPERATURE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [-10.0, 50.0]
+ },
+{
+   "mid": "&MISC",
+   "id": "HUMIDITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0, 90]
+ },
+{
+   "mid": "&MISC",
+   "id": "HVAC_MASS_TRANSPORT_CELL_L",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "IBLANK_SMV",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "I_MAX_TEMP",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [4000, 8000]
+ },
+{
+   "mid": "&MISC",
+   "id": "LEVEL_SET_ELLIPSE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "MAXIMUM_VISIBILITY",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [10, 100]
+ },
+{
+   "mid": "&MISC",
+   "id": "MINIMUM_FILM_THICKNESS",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.00000001, 0.01]
+ },
+{
+   "mid": "&MISC",
+   "id": "MPI_TIMEOUT",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [200, 3000]
+ },
+{
+   "mid": "&MISC",
+   "id": "NOISE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "NOISE_VELOCITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0001, 1.0]
+ },
+{
+   "mid": "&MISC",
+   "id": "NO_PRESSURE_ZONES",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "OVERWRITE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "PARTICLE_CFL",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "POROUS_FLOOR",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "PR",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 1.0]
+ },
+{
+   "mid": "&MISC",
+   "id": "P_INF",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [1000, 100000]
+ },
+{
+   "mid": "&MISC",
+   "id": "SC",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 1.0]
+ },
+{
+   "mid": "&MISC",
+   "id": "SHARED_FILE_SYSTEM",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "SIMULATION_MODE",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'DNS'", "'LES'", "'VLES'", "'SVLES'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "SMOKE3D_16",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "SOLID_PHASE_ONLY",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'FALSE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "THERMOPHORETIC_DEPOSITION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "THERMOPHORETIC_SETTLING",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "TMPA",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [-200, 200]
+ },
+{
+   "mid": "&MISC",
+   "id": "TURBULENT_DEPOSITION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MISC",
+   "id": "VERBOSE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&INIT",
    "id": "XB",
    "valueType": "{float}[6]",
    "isMust": true,
    "dimension": 6,
-   "scale": [0.0, 30.0]
+   "scale": [-10, 10]
  },
 {
-   "mid": "&OBST",
-   "id": "SURF_ID",
+   "mid": "&INIT",
+   "id": "TEMPERATURE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [-200.0, 200.0]
+ },
+{
+   "mid": "&INIT",
+   "id": "DENSITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [2, 20.0]
+ },
+{
+   "mid": "&INIT",
+   "id": "SPEC_ID",
    "valueType": "string",
    "isMust": false,
-   "dependency": "<ref:MODULE_SURF.ID>"
+   "scale": ["'CARBON DIOXIDE'", "'OXYGEN'", "'SOOT'", "'NITROGEN'", "'CARBON MONOXIDE'", "'OXYGEN ATOM'", "'PROPANE'", "'WATER VAPOR'", "'HYDROGEN CHLORIDE'"]
  },
 {
-   "mid": "&SURF",
-   "id": "ID",
+   "mid": "&INIT",
+   "id": "MASS_FRACTION",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&INIT",
+   "id": "VOLUME_FRACTION",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&INIT",
+   "id": "HRRPUV",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [200.0, 600.0]
+ },
+{
+   "mid": "&INIT",
+   "id": "RADIATIVE_FRACTION",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&VENT",
+   "id": "MB",
    "valueType": "string",
    "isMust": true,
-   "scale": ["'surf1'", "'surf2'"]
- },
-{
-   "mid": "&SURF",
-   "id": "HRRPUA",
-   "valueType": "float",
-   "isMust": false,
-   "scale": [100.0, 500.0],
-   "exclusion": "<clusion:MODULE_SURF.MATL_ID>"
- },
-{
-   "mid": "&SURF",
-   "id": "NEAR_WALL_EDDY_VISCOSITY",
-   "valueType": "float",
-   "isMust": false,
-   "scale": [0.0, 5.0],
-   "exclusion": "<clusion:MODULE_TIME.T_BEGIN:0>"
+   "scale": ["'XMAX'", "'XMIN'", "'YMAX'", "'YMIN'", "'ZMAX'", "'ZMIN'"]
  },
 {
    "mid": "&VENT",
    "id": "SURF_ID",
    "valueType": "string",
-   "isMust": false,
-   "dependency": "<ref:MODULE_SURF.ID>"
+   "isMust": true,
+   "scale": ["'OPEN'", "'MIRROR'", "'HVAC'"]
  },
 {
-   "mid": "&MATL",
-   "id": "ID",
+   "mid": "&VENT",
+   "id": "OUTLINE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&HAVC",
+   "id": "TYPE_ID",
    "valueType": "string",
    "isMust": true,
-   "scale": ["'STEEL'", "'WOOD'", "'CONCRETE'"]
+   "scale": ["'FAN'"]
  },
 {
-   "mid": "&SURF",
-   "id": "MATL_ID",
-   "valueType": "string",
-   "isMust": false,
-   "dependency": "<ref:MODULE_MATL.ID>"
- },
-{
-   "mid": "&REAC",
+   "mid": "&HAVC",
    "id": "ID",
    "valueType": "string",
-   "isMust": true,
-   "scale": ["'METHANE'", "'PROPANE'"]
+   "isMust": true
+ },
+{
+   "mid": "&HAVC",
+   "id": "MAX_FLOW",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 10.0]
+ },
+{
+   "mid": "&HAVC",
+   "id": "MAX_PRESSURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [10000, 100000]
+ },
+{
+   "mid": "&HAVC",
+   "id": "TAU_FAN",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [300.0, 5000.0]
+ },
+{
+   "mid": "&HAVC",
+   "id": "VOLUME_FLOW",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 10.0]
+ },
+{
+   "mid": "&HAVC",
+   "id": "XYZ",
+   "valueType": "{float}[3]",
+   "isMust": false,
+   "dimension": 3,
+   "scale": [-10.0, 10.0]
+ },
+{
+   "mid": "&HAVC",
+   "id": "LOSS",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&HAVC",
+   "id": "DIAMETER",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
  },
 {
    "mid": "&REAC",
    "id": "FUEL",
    "valueType": "string",
    "isMust": true,
-   "scale": ["'CH4'", "'C3H8'"],
-   "dependency": "<ref:MODULE_REAC.ID>"
+   "scale": ["'ETHYLENE'", "'HYDROGEN'", "'METHANE'", "'METHANOL'"]
+ },
+{
+   "mid": "&REAC",
+   "id": "AUTO_IGNITION_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [-273, 1000]
+ },
+{
+   "mid": "&REAC",
+   "id": "SETPOINT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 10.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'SKt2'", "'SKt3'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "ADIABATIC",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "AREA_MULTIPLIER",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 2.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "BACKING",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'EXPOSED'", "'INSULATED'", "'VOID'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "BURN_AWAY",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "BURN_DURATION",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [10, 1000000]
+ },
+{
+   "mid": "&SURF",
+   "id": "CELL_SIZE_FACTOR",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 2.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "COLOR",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'AQUAMARINE'", "'MAROON'", "'BEIGE'", "'RED'", "'EMERALD GREEN'", "'SALMON'", "'GOLD'", "'WHITE'", "'IVORY'", "'VIOLET'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "CONVECTION_LENGTH_SCALE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 2.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "CONVECTIVE_HEAT_FLUX",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 5.0],
+   "exclusion": "<clusion:MODULE_SURF.MATL_ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "CONVERT_VOLUME_TO_MASS",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "DEFAULT",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "DELTA_TMP_MAX",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [-100, 1000]
+ },
+{
+   "mid": "&SURF",
+   "id": "DRAG_COEFFICIENT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 3.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "DT_INSERT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0001, 0.1]
+ },
+{
+   "mid": "&SURF",
+   "id": "E_COEFFICIENT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0001, 0.1]
+ },
+{
+   "mid": "&SURF",
+   "id": "EMISSIVITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "EMISSIVITY_BACK",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "EXTERNAL_FLUX",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [0, 100]
+ },
+{
+   "mid": "&SURF",
+   "id": "EXTINCTION_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [-273, 100]
+ },
+{
+   "mid": "&SURF",
+   "id": "FREE_SLIP",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "GEOMETRY",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'CYLINDRICAL'", "'SPHERICAL'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "HEAT_OF_VAPORIZATION",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10.0, 10000.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "HEAT_TRANSFER_COEFFICIENT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [5.0, 2000.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "HEAT_TRANSFER_COEFFICIENT_BACK",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [5.0, 2000.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "HEAT_TRANSFER_MODEL",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'LOGLAW'"]
+ },
+{
+   "mid": "&SURF",
+   "id": "HRRPUA",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 5000.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "HT3D",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"],
+   "exclusion": "<clusion:MODULE_SURF.THICKNESS>"
+ },
+{
+   "mid": "&SURF",
+   "id": "IGNITION_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [100, 10000],
+   "exclusion": "<clusion:MODULE_SURF.MATL_ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "INNER_RADIUS",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 10.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "INTERNAL_HEAT_SOURCE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1000.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "MINIMUM_SCALING_HEAT_FLUX",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 100.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "MAXIMUM_SCALING_HEAT_FLUX",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [50.0, 100.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "MATL_ID",
+   "valueType": "string",
+   "isMust": true,
+   "dependency": "<ref:MODULE_MATL.ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "MINIMUM_BURNOUT_TIME",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [1000, 100000000]
+ },
+{
+   "mid": "&SURF",
+   "id": "MINIMUM_LAYER_THICKNESS",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.00000001, 0.000001]
+ },
+{
+   "mid": "&SURF",
+   "id": "N_LAYER_CELLS_MAX",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [1, 500]
+ },
+{
+   "mid": "&SURF",
+   "id": "NEAR_WALL_EDDY_VISCOSITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.01, 10.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "NEAR_WALL_TURBULENCE_MODEL",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'VAN DRIEST'"],
+   "exclusion": "<clusion:MODULE_SURF.MATL_ID>"
+ },
+{
+   "mid": "&SURF",
+   "id": "NET_HEAT_FLUX",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 5.0]
+ },
+{
+   "mid": "&SURF",
+   "id": "THICKNESS",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.001, 2.0]
+ },
+{
+   "mid": "&MATL",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": true,
+   "scale": ["'test230'"]
+ },
+{
+   "mid": "&MATL",
+   "id": "ABSORPTION_COEFFICIENT",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10.0, 100000.0]
+ },
+{
+   "mid": "&MATL",
+   "id": "ADJUST_H",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MATL",
+   "id": "ALLOW_SHRINKING",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MATL",
+   "id": "ALLOW_SWELLING",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&MATL",
+   "id": "BOILING_TEMPERATURE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10.0, 1000.0]
+ },
+{
+   "mid": "&MATL",
+   "id": "CONDUCTIVITY",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [1],
+   "extend": "1:MODULE_RAMP.CONDUCTIVITY_T"
+ },
+{
+   "mid": "&MATL",
+   "id": "DENSITY",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [100.0, 15000.0]
+ },
+{
+   "mid": "&MATL",
+   "id": "EMISSIVITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 1.0]
+ },
+{
+   "mid": "&MATL",
+   "id": "SPECIFIC_HEAT",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [0.1, 5.0],
+   "extend": "1:MODULE_RAMP.SPECIFIC_HEAT_F"
+ },
+{
+   "mid": "&MATL",
+   "id": "SURFACE_OXIDATION_MODEL",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&RAMP",
+   "id": "CONDUCTIVITY_T",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [0, 1000]
+ },
+{
+   "mid": "&RAMP",
+   "id": "CONDUCTIVITY_F",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.01, 1.0]
+ },
+{
+   "mid": "&RAMP",
+   "id": "SPECIFIC_HEAT_T",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [0, 1000]
+ },
+{
+   "mid": "&RAMP",
+   "id": "SPECIFIC_HEAT_F",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 5.0]
+ },
+{
+   "mid": "&OBST",
+   "id": "BULK_DENSITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 1000.0]
+ },
+{
+   "mid": "&OBST",
+   "id": "COLOR",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'AQUAMARINE'", "'MAROON'", "'BEIGE'", "'RED'", "'EMERALD GREEN'", "'SALMON'", "'GOLD'", "'WHITE'", "'IVORY'", "'VIOLET'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "OUTLINE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "OVERLAY",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "PERMIT_HOLE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "REMOVABLE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'TRUE'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "SHAPE",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'SPHERE'", "'CYLINDER'", "'CONE'", "'BOX'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "SURF_ID",
+   "valueType": "string",
+   "isMust": true,
+   "dependency": "<ref:MODULE_SURF.ID>"
+ },
+{
+   "mid": "&OBST",
+   "id": "THICKEN",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&OBST",
+   "id": "TRANSPARENCY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&GEOM",
+   "id": "SURF_ID",
+   "valueType": "string",
+   "isMust": true,
+   "dependency": "<ref:MODULE_SURF.ID>"
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_LENGTH",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [3, 6]
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_RADIUS",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [3, 4]
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_ORIGIN",
+   "valueType": "{integer}[3]",
+   "isMust": true,
+   "dimension": 3,
+   "scale": [5, 40]
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_AXIS",
+   "valueType": "{integer}[3]",
+   "isMust": true,
+   "dimension": 3,
+   "scale": [0, 2]
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_NSEG_AXIS",
+   "valueType": "integer",
+   "isMust": true,
+   "scale": [6]
+ },
+{
+   "mid": "&GEOM",
+   "id": "CYLINDER_NSEG_THETA",
+   "valueType": "integer",
+   "isMust": true,
+   "scale": [48]
+ },
+{
+   "mid": "&PART",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": false
+ },
+{
+   "mid": "&PART",
+   "id": "AGE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [1, 100]
+ },
+{
+   "mid": "&PART",
+   "id": "CHECK_DISTRIBUTION",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&PART",
+   "id": "COLOR",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'BLACK'", "'FOREST GREEN'"]
+ },
+{
+   "mid": "&PART",
+   "id": "DRAG_LAW",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'SPHERE'", "'CYLINDER'"]
+ },
+{
+   "mid": "&PART",
+   "id": "DIAMETER",
+   "valueType": "float",
+   "isMust": true,
+   "scale": [10.0, 100.0]
+ },
+{
+   "mid": "&PART",
+   "id": "INITIAL_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [-200, 200]
+ },
+{
+   "mid": "&PART",
+   "id": "SPEC_ID",
+   "valueType": "string",
+   "isMust": false,
+   "scale": ["'HYDROGEN FLUORIDE'", "'METHANE'", "'FORMALDEHYDE'"]
+ },
+{
+   "mid": "&PART",
+   "id": "HORIZONTAL_VELOCITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 1.0]
+ },
+{
+   "mid": "&PART",
+   "id": "VERTICAL_VELOCITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 2.0]
+ },
+{
+   "mid": "&PART",
+   "id": "MAXIMUM_DIAMETER",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10000.0, 1400000.0]
+ },
+{
+   "mid": "&PART",
+   "id": "MINIMUM_DIAMETER",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [1.0, 10.0]
+ },
+{
+   "mid": "&PART",
+   "id": "MONODISPERSE",
+   "valueType": "boolean",
+   "isMust": false,
+   "scale": ["'False'"]
+ },
+{
+   "mid": "&PART",
+   "id": "NEW_PARTICLE_INCRMENT",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [25, 1500]
+ },
+{
+   "mid": "&PART",
+   "id": "DENSE_VOLUME_FRACTION",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.01, 1.0]
+ },
+{
+   "mid": "&PART",
+   "id": "SURF_ID",
+   "valueType": "string",
+   "isMust": false
+ },
+{
+   "mid": "&PROP",
+   "id": "ID",
+   "valueType": "string",
+   "isMust": false
+ },
+{
+   "mid": "&PROP",
+   "id": "QUANTITY",
+   "valueType": "string",
+   "isMust": false
+ },
+{
+   "mid": "&PROP",
+   "id": "RTI",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [10, 200]
+ },
+{
+   "mid": "&PROP",
+   "id": "C_FACTOR",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.0, 1.0]
+ },
+{
+   "mid": "&PROP",
+   "id": "ACTIVATION_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": true,
+   "scale": [-100, 200]
+ },
+{
+   "mid": "&PROP",
+   "id": "INITIAL_TEMPERATURE",
+   "valueType": "integer",
+   "isMust": false,
+   "scale": [-200, 200]
+ },
+{
+   "mid": "&PROP",
+   "id": "FLOW_RATE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [10.0, 200.0]
+ },
+{
+   "mid": "&PROP",
+   "id": "MASS_FLOW_RATE",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 10.0]
+ },
+{
+   "mid": "&PROP",
+   "id": "OFFSET",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.01, 0.8]
+ },
+{
+   "mid": "&PROP",
+   "id": "PARTICLE_VELOCITY",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.1, 20.0]
+ },
+{
+   "mid": "&PROP",
+   "id": "ORIFICE_DIAMETER",
+   "valueType": "float",
+   "isMust": false,
+   "scale": [0.01, 2.0]
+ },
+{
+   "mid": "&PROP",
+   "id": "SPRAY_ANGLE",
+   "valueType": "{float}[2]",
+   "isMust": false,
+   "dimension": 2
+ },
+{
+   "mid": "&PROP",
+   "id": "PART_ID",
+   "valueType": "string",
+   "isMust": false
  }
 ]

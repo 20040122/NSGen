@@ -46,7 +46,6 @@ ValueType=boolean
 IsMust=False
 Scale={'FALSE'}
 
-
 Id=MODULE_MISC.AEROSOL_SCRUBBING
 ValueType=boolean
 IsMust=False
@@ -569,11 +568,6 @@ IsMust=False
 Scale={0.001,2.0}
 
 
-Id=MODULE_MATL.ID
-ValueType=string
-IsMust=True
-Scale={'test230'}
-
 Id=MODULE_MATL.ABSORPTION_COEFFICIENT
 ValueType=float
 IsMust=False
@@ -602,9 +596,7 @@ Scale={10.0,1000.0}
 Id=MODULE_MATL.CONDUCTIVITY
 ValueType=float
 IsMust=True
-Scale={1}
-Extend=<td:1:MODULE_RAMP.CONDUCTIVITY_T>
-Extend=<td:1:MODULE_RAMP.CONDUCTIVITY_F>
+Scale={0.01,1.0}
 
 Id=MODULE_MATL.DENSITY
 ValueType=float
@@ -620,13 +612,25 @@ Id=MODULE_MATL.SPECIFIC_HEAT
 ValueType=float
 IsMust=True
 Scale={0.1,5.0}
-Extend=<td:1:MODULE_RAMP.SPECIFIC_HEAT_T>
-Extend=<td:1:MODULE_RAMP.SPECIFIC_HEAT_F>
 
 Id=MODULE_MATL.SURFACE_OXIDATION_MODEL
 ValueType=boolean
 IsMust=False
 Scale={'False'}
+
+Id=MODULE_MATL.CONDUCTIVITY_RAMP
+ValueType=integer
+IsMust=False
+Scale={1}
+Extend=<td:1:MODULE_RAMP.CONDUCTIVITY_T>
+Extend=<td:1:MODULE_RAMP.CONDUCTIVITY_F>
+
+Id=MODULE_MATL.SPECIFIC_HEAT_RAMP
+ValueType=integer
+IsMust=False
+Scale={1}
+Extend=<td:1:MODULE_RAMP.SPECIFIC_HEAT_T>
+Extend=<td:1:MODULE_RAMP.SPECIFIC_HEAT_F>
 
 
 Id=MODULE_RAMP.CONDUCTIVITY_T
@@ -687,7 +691,7 @@ Scale={'SPHERE','CYLINDER','CONE','BOX'}
 
 Id=MODULE_OBST.SURF_ID
 ValueType=string
-IsMust=True
+IsMust=False
 Scale={}
 Dependency=<ref:MODULE_SURF.ID>
 
@@ -704,7 +708,7 @@ Scale={0.0,1.0}
 
 Id=MODULE_GEOM.SURF_ID
 ValueType=string
-IsMust=True
+IsMust=False
 Scale={}
 Dependency=<ref:MODULE_SURF.ID>
 

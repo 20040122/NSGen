@@ -1,3 +1,4 @@
+
 package org.example.sm.generator
 
 import org.eclipse.emf.ecore.EObject
